@@ -25,6 +25,10 @@ class WeatherViewController: UIViewController {
         manager.delegate = self
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
+
+    }
+    
+    @IBAction func localSearchPressed(_ sender: UIButton) {
         locationManager.requestLocation()
     }
 }
@@ -88,12 +92,14 @@ extension WeatherViewController: CLLocationManagerDelegate {
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let userLocation:CLLocation = locations[0] as CLLocation
+    func locationManager(_ locationManager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let userLocation:CLLocation = locations.last {
+            locationManager.stopUpdatingLocation()
+            let lat = userLocation.coordinate.latitude
+            let long = userLocation.coordinate.longitude
+            manager.fetchWeather(lat: lat, long: long)
+        }
         
-        print("The locationManager has updated its location.")
-        print("The number of locations is now: \(locations.count)")
-        print("The first location is: \(userLocation)")
     }
 }
 
